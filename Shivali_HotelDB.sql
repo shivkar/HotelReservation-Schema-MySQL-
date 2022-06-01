@@ -1,0 +1,36 @@
+DROP DATABASE IF EXISTS HotelDB;
+CREATE DATABASE HOTELDB ;
+USE HOTELDB ;
+
+CREATE TABLE Room(  
+RoomNumber  INT PRIMARY KEY AUTO_INCREMENT  ,
+Type VARCHAR(10) NOT NULL ,
+Amenity VARCHAR (30) NOT NULL , 
+IsAddAccessible BOOL NOT NULL DEFAULT 1,
+ StandardOccupancy INT NOT NULL,
+ MaximumOccupancy INT NOT NULL,
+ BasePrice DECIMAL( 5,2 ) NOT NULL ,
+ ExtraPerson DECIMAL ( 4,2) NOT NULL ) ; 
+ 
+ CREATE TABLE Guest ( 
+ GuestName VARCHAR(50) NOT NULL ,
+ Address VARCHAR(50) NOT NULL ,
+ City VARCHAR(50) NOT NULL , 
+ State CHAR(2) NOT NULL , 
+ Zip CHAR(5) NOT NULL , 
+ Phone CHAR(14) NOT NULL ); 
+ 
+ CREATE TABLE Reservations ( 
+ RoomNumber INT PRIMARY KEY AUTO_INCREMENT  ,
+ GuestName VARCHAR(50) NOT NULL ,
+ Adults INT NOT NULL , 
+ Children INT NOT NULL , 
+ StartDate DATE , 
+ EndDate DATE , 
+ TotalRoomCost DECIMAL ( 5,2 ) NOT NULL) ; 
+ 
+ 
+ 
+ 
+
+ 
