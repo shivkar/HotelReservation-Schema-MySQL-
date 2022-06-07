@@ -4,7 +4,7 @@ CREATE DATABASE HOTELDB ;
 USE HOTELDB ;
 
 CREATE TABLE Room(  
-RoomNumber  INT PRIMARY KEY AUTO_INCREMENT  ,
+RoomNumber  INT PRIMARY KEY NOT NULL  ,
 Type VARCHAR(10) NOT NULL ,
 Amenity VARCHAR (30) NOT NULL , 
 IsAddAccessible BOOL NOT NULL DEFAULT 1,
@@ -12,6 +12,7 @@ IsAddAccessible BOOL NOT NULL DEFAULT 1,
  MaximumOccupancy INT NOT NULL,
  BasePrice DECIMAL( 5,2 ) NOT NULL ,
  ExtraPerson DECIMAL ( 4,2) NOT NULL ) ; 
+ 
  
  CREATE TABLE Guest ( 
  GuestId INT PRIMARY KEY AUTO_INCREMENT, 
@@ -21,6 +22,7 @@ IsAddAccessible BOOL NOT NULL DEFAULT 1,
  State CHAR(2) NOT NULL , 
  Zip CHAR(5) NOT NULL , 
  Phone CHAR(14) NOT NULL ); 
+ 
  
  CREATE TABLE Reservations ( 
  ReservationId INT PRIMARY KEY AUTO_INCREMENT,
@@ -36,6 +38,7 @@ IsAddAccessible BOOL NOT NULL DEFAULT 1,
     AmenityId INT PRIMARY KEY AUTO_INCREMENT,
     AmenityType VARCHAR(30)) ;
     
+ DROP TABLE Amenity ; 
  
  CREATE TABLE RoomAmenity (
     RoomNumber INT NOT NULL,
@@ -46,6 +49,9 @@ IsAddAccessible BOOL NOT NULL DEFAULT 1,
 	FOREIGN KEY fk_RoomAmenity_Amenity (AmenityId)
 		REFERENCES Amenity(AmenityId)
 );
+
+DROP TABLE RoomAmenity ;
+
 
 CREATE TABLE GuestReservation (
 	GuestId INT,
@@ -66,3 +72,4 @@ CREATE TABLE RoomReservation(
 	FOREIGN KEY fk_RoomReservation_Reservations (ReservationId)
 		REFERENCES Reservations (ReservationId)
 );
+
