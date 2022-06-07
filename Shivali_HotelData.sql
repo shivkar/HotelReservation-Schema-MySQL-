@@ -72,7 +72,7 @@ SELECT * FROM Reservations;
     (11,'Maritza Tilton','939 Linda Rd.','Burke','VA',22015,'(446) 351-6860'),
     (12,'Joleen Tison','87 Queen St.','Drexel Hill','PA',19026,'(231) 893-2755');
     
-    
+   
 	INSERT INTO RoomReservation (RoomNumber, ReservationId) VALUES
     (308,1),
     (203,2),
@@ -135,5 +135,5 @@ SELECT * From RoomReservation ;
     DELETE FROM GuestReservation WHERE GuestId = 8;
     DELETE FROM Guest WHERE GuestId = 8;
     DELETE FROM RoomReservation WHERE ReservationId = 8;
-	DELETE FROM Reservation WHERE ReservationId = 8;
+	DELETE FROM Reservations WHERE ReservationId = 8;
 	
