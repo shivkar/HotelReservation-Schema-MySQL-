@@ -1,75 +1,85 @@
 
 DROP DATABASE IF EXISTS HotelDB;
-CREATE DATABASE HOTELDB ;
-USE HOTELDB ;
+CREATE DATABASE HotelDB ; 
+USE HotelDB  ;
 
-CREATE TABLE Room(  
-RoomNumber  INT PRIMARY KEY NOT NULL  ,
-Type VARCHAR(10) NOT NULL ,
-Amenity VARCHAR (30) NOT NULL , 
-IsAddAccessible BOOL NOT NULL DEFAULT 1,
- StandardOccupancy INT NOT NULL,
- MaximumOccupancy INT NOT NULL,
- BasePrice DECIMAL( 5,2 ) NOT NULL ,
- ExtraPerson DECIMAL ( 4,2) NOT NULL ) ; 
- 
- 
+-- Database with 2NF and 3NF . 
+
  CREATE TABLE Guest ( 
  GuestId INT PRIMARY KEY AUTO_INCREMENT, 
- GuestName VARCHAR(50) NOT NULL ,
+ FirstName VARCHAR(20) NOT NULL ,
+ LastName VARCHAR(20) NOT NULL ,
  Address VARCHAR(50) NOT NULL ,
  City VARCHAR(50) NOT NULL , 
  State CHAR(2) NOT NULL , 
  Zip CHAR(5) NOT NULL , 
  Phone CHAR(14) NOT NULL ); 
+
+CREATE TABLE RoomType ( 
+ RoomTypeId INT PRIMARY KEY NOT NULL , 
+ RoomType VARCHAR(10) NOT NULL, 
+ StandardOccupancy INT NOT NULL,
+ MaximumOccupancy INT NOT NULL,
+ BasePrice DECIMAL( 6,2 ) NOT NULL ,
+ ExtraPerson DECIMAL ( 4,2) NOT NULL ) ; 
+
+CREATE TABLE Amenities (
+ AmenityId INT PRIMARY KEY NOT NULL , 
+ AmenityType VARCHAR (30) NOT NULL );
  
  
- CREATE TABLE Reservations ( 
+CREATE TABLE Room(  
+RoomId INT PRIMARY KEY NOT NULL , 
+RoomNumber  INT  NOT NULL  ,
+AmenityId INT NOT NULL ,
+RoomTypeId INT NOT NULL , 
+FOREIGN KEY _fk_Room_Amenities (AmenityId)
+REFERENCES Amenities( AmenityId),
+FOREIGN KEY _fk_Room_RoomType (RoomTypeId)
+REFERENCES RoomType( AmenityId),
+IsADAAccessible BOOL NOT NULL DEFAULT 1
+);
+ 
+ 
+ 
+ CREATE TABLE RoomAmenities (
+ RoomId INT NOT NULL , 
+ AmenityId INT NOT NULL ,
+ PRIMARY KEY _pk_RoomAmenities ( RoomId,AmenityId) ,
+ FOREIGN KEY _fk_RoomAmenities_Room(RoomId)
+  REFERENCES Room (RoomId) ,
+ FOREIGN KEY _fk_RoomAmenities_Amenities (AmenityId) 
+ REFERENCES Ameities(AmenityId) ) ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ CREATE TABLE Reservation ( 
  ReservationId INT PRIMARY KEY AUTO_INCREMENT,
- RoomNumber INT NOT NULL  ,
- GuestName VARCHAR(50) NOT NULL ,
+ GuestId INT NOT NULL , 
  Adults INT NOT NULL , 
  Children INT NOT NULL , 
  StartDate DATE , 
  EndDate DATE , 
- TotalRoomCost DECIMAL ( 7,2 ) NOT NULL) ; 
- 
- CREATE TABLE Amenity (
-    AmenityId INT PRIMARY KEY AUTO_INCREMENT,
-    AmenityType VARCHAR(30)) ;
-    
- DROP TABLE Amenity ; 
- 
- CREATE TABLE RoomAmenity (
-    RoomNumber INT NOT NULL,
-    AmenityId INT NOT NULL,
-    PRIMARY KEY pk_RoomAmenity (RoomNumber, AmenityId),
-	FOREIGN KEY fk_RoomAmenity_Room (RoomNumber)
-		REFERENCES Room(RoomNumber),
-	FOREIGN KEY fk_RoomAmenity_Amenity (AmenityId)
-		REFERENCES Amenity(AmenityId)
-);
-
-DROP TABLE RoomAmenity ;
-
-
-CREATE TABLE GuestReservation (
-	GuestId INT,
-    ReservationId INT,
-    PRIMARY KEY pk_GuestReservation (GuestId, ReservationId),
-    FOREIGN KEY fk_GuestReservation_Guest (GuestId)
+ TotalRoomCost DECIMAL ( 8,2 ) NOT NULL,
+ RoomId INT NOT NULL ,
+ FOREIGN KEY fk_Reservation_Guest (GuestId)
 		REFERENCES Guest (GuestId),
-	FOREIGN KEY fk_GuestReservation_Reservations (ReservationId)
-		REFERENCES Reservations (ReservationId)
-);
+	FOREIGN KEY fk_Reservation_Room (RoomId)
+		REFERENCES Room (RoomId)
+ );
+ 
+ 
+ 
+ 
+ 
 
-CREATE TABLE RoomReservation(
-	RoomNumber INT,
-    ReservationId INT,
-    PRIMARY KEY pk_RoomReservation (RoomNumber, ReservationId),
-    FOREIGN KEY fk_RoomReservation_Room (RoomNumber)
-		REFERENCES Room (RoomNumber),
-	FOREIGN KEY fk_RoomReservation_Reservations (ReservationId)
-		REFERENCES Reservations (ReservationId)
-);
+
+
+
 
