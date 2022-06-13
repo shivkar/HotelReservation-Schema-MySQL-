@@ -5,15 +5,22 @@ Use HotelDB ;
 -- including the name of the guest, the room number(s), and the reservation dates.
 --------------------
 SELECT 
-Guest.GuestName,
-Room.RoomNumber ,
-Reservations.StartDate ,
-Reservations.EndDate 
-From Guest 
-INNER JOIN GuestReservation ON Guest.GuestId = GuestReservation.GuestId
-INNER JOIN Reservations ON GuestReservation.ReservationId = RoomReservation.ReservationId
-INNER JOIN Room  ON  RoomReservation.RoomNumber =Room.RoomNumber 
+Reservation.FirstName,
+Reservation.LastName,
+Room.RoomNumber,
+Reservation.StartDate ,
+Reservation.EndDate 
+From Reservation 
+INNER JOIN Room ON Reservation.RoomId = Room.RoomId
 Where EndDate  Between '2023-07-01' And '2023-07-31'; 
+
+-- 4 rows GuestName	RoomNumber	StartDate	EndDate
+
+-- Shivali Desai	205	28-06-2023	02-07-2023
+-- Walter Holaway	204	13-07-2023	14-07-2023
+-- Wilfred Vise	401	18-07-2023	21-07-2023
+-- Bettyann Seery	303	28-07-2023	29-07-2023
+
 
 -- QUERY 2
 -- Write a query that returns a list of all reservations for rooms with a jacuzzi, 
@@ -21,16 +28,15 @@ Where EndDate  Between '2023-07-01' And '2023-07-31';
 --------------------
 
 SELECT 
-Guest.GuestName ,
+Reservation.FirstName,
+Reservation.LastName,
 Room.RoomNumber,
-Reservations.StartDate,
-Reservations.EndDate 
- FROM Room
-INNER JOIN RoomReservation ON Room.RoomNumber = RoomReservation.RoomNumber
-INNER JOIN Reservations ON RoomReservation.ReservationId = Reservations.ReservationId
-INNER JOIN GuestReservation ON Reservations.ReservationId = GuestReservation.ReservationId
-INNER JOIN Guest ON GuestReservation.GuestId = Guest.GuestId
-WHERE Amenity Like  '%Jacuzzi%' ;
+Reservation.StartDate,
+Reservation.EndDate 
+ FROM Reservation 
+INNER JOIN Room ON Reservation.RoomId = Room.RoomId
+INNER JOIN RoomAmenities ON Room.RoomId = RoomAmenities.RoomId
+WHERE AmenityId = 2  ;
 
 -- 11 rows 
 -- Karie Yang	201	06-03-2023	07-03-2023
@@ -52,18 +58,15 @@ WHERE Amenity Like  '%Jacuzzi%' ;
 --------------------
 
 SELECT 
-
-Guest.GuestName , 
-Room. RoomNumber,
-Reservations.StartDate, 
-Reservations.EndDate, 
-Reservations.Adults + Reservations. Children As TotalPeople 
-FROM Guest 
-INNER JOIN GuestReservation ON Guest.GuestId = GuestReservation.GuestId
-INNER JOIN Reservations ON  GuestReservation.ReservationId = Reservations.ReservationId
-INNER JOIN RoomReservation ON Reservations.ReservationId = RoomReservation.ReservationId
-INNER JOIN Room ON RoomReservation.RoomNumber = Room.RoomNumber
-WHERE Guest.GuestId = 1;
+Reservation.FirstName , 
+Reservation.LastName,
+Room.RoomNumber,
+Reservation.StartDate, 
+Reservation.EndDate, 
+Reservation.Adults + Reservation. Children As TotalPeople 
+FROM Reservation  
+INNER JOIN Room ON Reservation.RoomId = Room.RoomId
+WHERE Reservation.guestId = 1;
 
 -- 2 Rows 
 -- Shivali Desai	307	17-03-2023	20-03-2023	2
@@ -75,26 +78,11 @@ WHERE Guest.GuestId = 1;
 --------------------
 
 SELECT 
-
 Room. RoomNumber ,
-Reservations.ReservationId,
-CASE
-		WHEN (((Room.RoomNumber BETWEEN '201' AND '204') OR (Room.RoomNumber BETWEEN '301' AND '304')) AND Reservations.Adults <= 2)
-			THEN ((Room.BasePrice) * DATEDIFF(Reservations.EndDate, Reservations.StartDate))
-		 WHEN (((Room.RoomNumber BETWEEN '201' AND '204') OR (Room.RoomNumber BETWEEN '301' AND '304')) AND Reservations.Adults > 2)
-			 THEN ((Room.BasePrice + ((Reservations.Adults - Room.StandardOccupancy) * 10) * DATEDIFF(Reservations.EndDate, Reservations.StartDate)))
-		WHEN ((Room.RoomNumber BETWEEN '205' AND '208') OR (Room.RoomNumber BETWEEN '305' AND '308'))
-			 THEN ((Room.BasePrice) * DATEDIFF(Reservations.EndDate, Reservations.StartDate))
-		WHEN (((Room.RoomNumber BETWEEN '401' AND '402')) AND Reservations.Adults <= 3)
-			THEN ((Room.BasePrice) * DATEDIFF(Reservations.EndDate, Reservations.StartDate))
-		WHEN (((Room.RoomNumber BETWEEN '401' AND '402')) AND Reservations.Adults > 3)
-			THEN ((Room.BasePrice + ((Reservations.Adults - Room.StandardOccupancy) * 20) * DATEDIFF(Reservations.EndDate, Reservations.StartDate)))
-	END AS Total
-FROM Guest
-RIGHT OUTER JOIN GuestReservation ON Guest.GuestId = GuestReservation.GuestId
-RIGHT OUTER JOIN Reservations ON  GuestReservation.ReservationId = Reservations.ReservationId
-RIGHT OUTER JOIN RoomReservation ON Reservations.ReservationId = RoomReservation.ReservationId
-RIGHT OUTER JOIN Room ON RoomReservation.RoomNumber = Room.RoomNumber;
+Reservation.ReservationId,
+Reservation.TotalRoomCost
+From Room 
+LEFT OUTER JOIN Reservation ON Room.RoomId = Reservation.RoomId;
     
 -- RoomNumber	ReservationId	Total
 -- 201	4	199.99
@@ -123,3 +111,55 @@ RIGHT OUTER JOIN Room ON RoomReservation.RoomNumber = Room.RoomNumber;
 -- 401	17	459.99
 -- 401	22	1199.97
 -- 402	NULL	NULL
+
+-- QUERY 5
+-- Write a query that returns all the rooms accommodating at least 
+-- three guests and that are reserved on any date in April 2023.
+
+SELECT 
+	Room.RoomNumber
+FROM Room
+INNER JOIN Reservation ON Room.RoomId = Reservation.RoomId
+WHERE 	(Reservation.Adults + Reservation.Children) >=3
+		AND ((Reservation.StartDate BETWEEN '2023-04-01' AND '2023-04-30')
+		OR (Reservation.EndDate BETWEEN '2023-04-01' AND '2023-04-30'));
+        
+        -- None 
+        
+-- QUERY 6
+-- Write a query that returns a list of all guest names and the number of reservations per guest, 
+-- sorted starting with the guest with the most reservations and then by the guest's last name.
+--------------------
+
+SELECT 
+	Guest.FirstName ,  
+    Guest.LastName ,
+    COUNT(Reservation.ReservationId) AS TotalReservations
+FROM Guest  
+INNER JOIN Reservation ON Guest.GuestId = Reservation.GuestId
+GROUP BY Reservation.GuestId 
+ORDER BY TotalReservations DESC, Guest.LastName ;
+
+-- 12 rows GuestName	TotalReservations
+-- Mack Simmer	4
+-- Bettyann Seery	3
+-- Aurore Lipton	2
+-- Duane Cullison	2
+-- Joleen Tison	2
+-- Karie Yang	2
+-- Maritza Tilton	2
+-- Shivali Desai	2
+-- Walter Holaway	2
+-- Wilfred Vise	2
+-- Zachery Luechtefield	1
+
+
+-- 7. Write a query that displays the name, address, and phone number of a guest based on their phone number. (Choose a phone number from the existing data.)
+
+SELECT 
+Guest.FirstName , 
+Guest.LastName ,
+Guest.Address,
+Guest.phone 
+FROM Guest 
+WHERE phone = '(647) 647-6470';
