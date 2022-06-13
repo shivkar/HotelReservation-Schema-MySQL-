@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS HotelDB;
 CREATE DATABASE HotelDB ; 
 USE HotelDB  ;
 
--- Database with 2NF and 3NF . 
+
 
  CREATE TABLE Guest ( 
  GuestId INT PRIMARY KEY AUTO_INCREMENT, 
@@ -52,6 +52,8 @@ IsADDAccessible BOOL NOT NULL DEFAULT 1
  ReservationId INT PRIMARY KEY AUTO_INCREMENT,
  RoomId INT NOT NULL ,
  GuestId INT NOT NULL , 
+ FirstName VARCHAR(20) NOT NULL ,
+ LastName VARCHAR(20) NOT NULL ,
  Adults INT NOT NULL , 
  Children INT NOT NULL , 
  StartDate DATE , 
